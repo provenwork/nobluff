@@ -34,7 +34,7 @@
 
 ## 🎬 Demo
 
-[![One-minute demo: your agent says "all tests pass", the transcript says otherwise, NoBluff flags it](assets/demo-poster.jpg)](assets/demo.mp4)
+https://github.com/user-attachments/assets/9e85a7cf-eeed-47ce-94a3-cb08cf1eaa45
 
 <p align="center"><sub>One minute, with sound.</sub></p>
 
