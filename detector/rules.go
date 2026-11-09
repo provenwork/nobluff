@@ -55,8 +55,8 @@ func claims(text string, re *regexp.Regexp) []string {
 	var out []string
 	for _, s := range sentence.FindAllString(clean, -1) {
 		s = strings.TrimSpace(s)
-		loc := re.FindStringIndex(s)
-		if s == "" || loc == nil || intent.MatchString(s) {
+		locs := re.FindAllStringIndex(s, -1)
+		if s == "" || locs == nil || intent.MatchString(s) {
 			continue
 		}
 		// A question asks, it does not assert: "Tu veux que je vérifie… ?", "Want me to check?".
@@ -70,20 +70,52 @@ func claims(text string, re *regexp.Regexp) []string {
 		if strings.HasSuffix(strings.TrimRight(s, "*_ \t"), ":") {
 			continue
 		}
-		// A sentence about someone else's work ("The author fixed it", "Il a corrigé") is a report,
-		// not the agent's own claim, unless the agent is also a subject of it.
-		if win := s[max(0, loc[0]-60):loc[0]]; thirdPerson.MatchString(win) && !firstPerson.MatchString(win) {
-			continue
-		}
-		from := loc[0] - 30
-		if from < 0 {
-			from = 0
-		}
-		if !negation.MatchString(s[from:loc[0]]) && !negatedAfter.MatchString(s[loc[1]:]) && !promiseAfter.MatchString(s[loc[1]:]) {
-			out = append(out, s)
+		// Every match counts: an adjective first (« le fichier corrigé ») must not hide a claim later
+		// in the same sentence (« … et j'ai vérifié le résultat »).
+		for _, loc := range locs {
+			if assertedAt(s, loc) {
+				out = append(out, s)
+				break
+			}
 		}
 	}
 	return out
+}
+
+// assertedAt tells whether the match at loc is the agent's own, unhedged claim.
+func assertedAt(s string, loc []int) bool {
+	// A sentence about someone else's work ("The author fixed it", "Il a corrigé") is a report,
+	// not the agent's own claim, unless the agent is also a subject of it.
+	if win := s[max(0, loc[0]-60):loc[0]]; thirdPerson.MatchString(win) && !firstPerson.MatchString(win) {
+		return false
+	}
+	if participleAdjective(s, loc) {
+		return false
+	}
+	from := max(0, loc[0]-30)
+	return !negation.MatchString(s[from:loc[0]]) && !negatedAfter.MatchString(s[loc[1]:]) && !promiseAfter.MatchString(s[loc[1]:])
+}
+
+// A participle used as an adjective describes a noun, it reports no result. French places it after
+// the noun group (« une sortie récente vérifiée », « le fichier corrigé »), English before the noun
+// ("the fixed version", "a verified build"). An auxiliary in between (« est corrigé », « a été
+// vérifié ») or a subject (« j'ai corrigé », "That fixed it") keeps it a claim.
+var participle = regexp.MustCompile(`(?i)^(?:verified|confirmed|fixed|resolved|v[ée]rifi[ée]e?s?|confirm[ée]e?s?|corrig[ée]e?s?)$`)
+var frNounGroupBefore = regexp.MustCompile(`(?i)(?:^|[^\p{L}])(?:le|la|les|l['’]|un|une|des|du|ce|cet|cette|ces|mon|ma|mes|ton|ta|tes|son|sa|ses|notre|nos|votre|vos|leur|leurs)\s*((?:\p{L}[\p{L}\p{N}_-]*\s+){1,3})$`)
+var frAuxiliary = regexp.MustCompile(`(?i)(?:^|\s)(?:est|sont|été|ai|as|a|avons|avez|ont|était|étaient|sera|seront|semble|semblent|reste|restent|paraît)\s`)
+var enDeterminerBefore = regexp.MustCompile(`(?i)(?:^|[^\p{L}])(?:the|a|an|my|your|our|its|their|his|her)\s+(?:\p{L}+ly\s+)?$`)
+var nounAfter = regexp.MustCompile(`^\s+\p{L}`)
+
+func participleAdjective(s string, loc []int) bool {
+	word := strings.TrimRightFunc(s[loc[0]:loc[1]], func(r rune) bool { return !(r == 'é' || r == 'É' || r >= 'a' && r <= 'z' || r >= 'A' && r <= 'Z') })
+	if !participle.MatchString(word) {
+		return false
+	}
+	before := s[max(0, loc[0]-60):loc[0]]
+	if m := frNounGroupBefore.FindStringSubmatch(before); m != nil && !frAuxiliary.MatchString(" "+m[1]) {
+		return true
+	}
+	return enDeterminerBefore.MatchString(before) && nounAfter.MatchString(s[loc[0]+len(word):])
 }
 
 // lastEdit is the last change a test could contradict. A prose file (README, notes, an agent's

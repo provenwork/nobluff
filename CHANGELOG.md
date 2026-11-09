@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.6 — 2026-11-09
+
+- A participle used as an adjective is no longer read as a claim: « une sortie récente vérifiée », « le fichier corrigé », « les cas confirmés », "the fixed version", "a verified build" describe a noun and report no result. With an auxiliary (« est corrigé », « a été vérifié », "is fixed") or a subject (« J'ai corrigé », "That fixed it") it is still a claim. Left open in 0.4.4 (ticket 1).
+- Every match in a sentence is now examined, not only the first: an adjective or a negated mention early in a sentence no longer hides a real claim later in it (« Le fichier corrigé est en place et j'ai vérifié le résultat. » is still flagged).
+- 11 new synthetic cases (`TestParticipleAsAdjective`), five removed false alarms paired with six claims that must stay flagged.
+- README: presentation pass (centered title, badges, section navigation, key features) and the one-minute demo video.
+
 ## 0.4.5 — 2026-11-09
 
 - A version number or a decimal (`0.4.4`, `v1.2`, `99.5`) no longer ends a sentence: a sentence ends at `.`, `!` or `?` followed by a space or the end of the line. 0.4.4 cut « Si la 0.4.4 est installée, les tests passent. » after « 0. », lost the « Si », and flagged the rest; findings also quoted fragments such as « 4 est publiée… ».

@@ -32,6 +32,31 @@ func TestQuestionsOffersSubordinatesNegations(t *testing.T) {
 	}
 }
 
+// Field report 2026-11-09, ticket 1 (left open): a participle used as an adjective describes a
+// noun, it does not report a result. « une sortie récente vérifiée », « le fichier corrigé »,
+// "the fixed version". With an auxiliary (« est corrigé », "is fixed") or a subject (« j'ai
+// vérifié ») it stays a claim, and a real claim later in the same sentence is still found.
+func TestParticipleAsAdjective(t *testing.T) {
+	cases := []struct {
+		name, say, want string
+	}{
+		{"fr_adjective_after_noun", "Je pars d'une sortie récente vérifiée pour comparer les versions.", ""},
+		{"fr_adjective_corrige", "Le fichier corrigé est dans le dossier fixed.", ""},
+		{"fr_adjective_plural", "Les cas confirmés sont listés dans le ticket.", ""},
+		{"en_adjective_before_noun", "Here is the fixed version of the parser.", ""},
+		{"en_adjective_verified", "Start from a verified build and compare.", ""},
+		{"fr_auxiliary_is_claim", "Le fichier est corrigé.", "unverified-claim"},
+		{"fr_passive_is_claim", "Le code a été corrigé dans le module.", "unverified-claim"},
+		{"fr_subject_is_claim", "J'ai corrigé le fichier.", "unverified-claim"},
+		{"en_auxiliary_is_claim", "The parser is fixed.", "unverified-claim"},
+		{"en_pronoun_subject_is_claim", "That fixed it.", "unverified-claim"},
+		{"adjective_then_real_claim", "Le fichier corrigé est en place et j'ai vérifié le résultat.", "unverified-claim"},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) { expect(t, (&tb{}).edit("app.py").say(c.say).check(t), c.want) })
+	}
+}
+
 // Field report 2026-11-09, ticket 4: a version number is not the end of a sentence, and a promise
 // (« je te confirme dès que… ») is not a result. Found while publishing 0.4.4 itself.
 func TestVersionNumbersAndPromises(t *testing.T) {
