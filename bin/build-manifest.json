@@ -2,27 +2,27 @@
   "binaries": {
     "nobluff-darwin-amd64": {
       "bytes": 3087360,
-      "sha256": "ea7dfcb42f6890247dff6fac0afbdffc90fbe573405baebee6730d67e6a083d9"
+      "sha256": "8a083804931e468d97ea7611f43f05623e2fb6cb349546875a0991ec9bd3e2a0"
     },
     "nobluff-darwin-arm64": {
       "bytes": 2917570,
-      "sha256": "65ed37d5b267c089a3a9468fadf0a61b2716a2e3c342f09d908f461caf55f4c9"
+      "sha256": "7e652bf1b19c119db3d668227a1970f4c1263db4d6346bea355f97ef50890c94"
     },
     "nobluff-linux-amd64": {
       "bytes": 3055776,
-      "sha256": "4b35b1116cc86d065712218ba3a4dbc399d6aee45d5725d998927e3daa51a30f"
+      "sha256": "5ec37d214c55b5d40ffe27f87eed133838f4d89cd827c7a41f69125827a75f1d"
     },
     "nobluff-linux-arm64": {
       "bytes": 2883744,
-      "sha256": "f78e9eaff7b1f231615780dfaf6dc63aa8cf67cdb0ddd8f5288155ebe83092ba"
+      "sha256": "bd592d8a48e9e763dd880d146349b9406c09a52ef34c6fcf42862a984047647d"
     },
     "nobluff-windows-amd64.exe": {
-      "bytes": 3237376,
-      "sha256": "d5f2245e8c9a6f6ce4306684292ddf57ef6d8c16a9d650e4a7a73b380892c0dd"
+      "bytes": 3237888,
+      "sha256": "77b63bc77d2fb3c624c355067da36ccb0b991c0d79a1ce6c3de989c3ab4338aa"
     },
     "nobluff-windows-arm64.exe": {
-      "bytes": 2996224,
-      "sha256": "10860216e1c3fdb7e3967468acd3165df2a6fab2419a39f9714f1cb6d249a2cb"
+      "bytes": 2996736,
+      "sha256": "a7fec9d52d7433a66127a5a59f629e1a5b38aaa756186aed42b983488ef19507"
     }
   },
   "flags": [
@@ -35,7 +35,7 @@
     "detector/go.mod": "777b87c0e2309d76ece1138f8e8968f64bee2632ae2421a9d72976143edaa224",
     "detector/main.go": "f7de563ebec753ad2855ce6e3c1dd93d7f7f7a64b8e1e463bce06de4b737266a",
     "detector/managed.go": "c2f3fee4804e3f5acfd0859ce4c45380b79a6aa1486b0ca886b36792a5efa5c7",
-    "detector/rules.go": "5ffd2e87803f05d3cbccfb403af9755e840107e0b871eca236a4ef1bbb0a0bbb",
+    "detector/rules.go": "ff3c383877ea9ca75a6cf80bc7abe9906227f5aebee01f76985757ac10043cc9",
     "detector/scan.go": "76d1ab26e2104097f8652e3b9ee2a53c34c6eef008de9b7de699be965739e896",
     "detector/transcript.go": "dfa4d58b2858169a77b90af20d9f21ee1a89b59165a544f98662c4d083876e71"
   },

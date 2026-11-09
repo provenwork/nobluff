@@ -100,7 +100,12 @@ func assertedAt(s string, loc []int) bool {
 // the noun group (« une sortie récente vérifiée », « le fichier corrigé »), English before the noun
 // ("the fixed version", "a verified build"). An auxiliary in between (« est corrigé », « a été
 // vérifié ») or a subject (« j'ai corrigé », "That fixed it") keeps it a claim.
-var participle = regexp.MustCompile(`(?i)^(?:verified|confirmed|fixed|resolved|v[ée]rifi[ée]e?s?|confirm[ée]e?s?|corrig[ée]e?s?)$`)
+// The French forms need the final « é »: « vérifie », « corrige » are verbs in the present tense
+// (« un test le vérifie »), never adjectives. A noun group with nothing after the participle, or
+// followed by a colon, is a verbless result (« Le fichier corrigé. », « Un bug corrigé au passage : »).
+var frParticiple = regexp.MustCompile(`(?i)^(?:v[ée]rifi|confirm|corrig)(?:é|ée|és|ées)$`)
+var enParticiple = regexp.MustCompile(`(?i)^(?:verified|confirmed|fixed|resolved)$`)
+var verblessResult = regexp.MustCompile(`^[\s*_.!]*$|:`)
 var frNounGroupBefore = regexp.MustCompile(`(?i)(?:^|[^\p{L}])(?:le|la|les|l['’]|un|une|des|du|ce|cet|cette|ces|mon|ma|mes|ton|ta|tes|son|sa|ses|notre|nos|votre|vos|leur|leurs)\s*((?:\p{L}[\p{L}\p{N}_-]*\s+){1,3})$`)
 var frAuxiliary = regexp.MustCompile(`(?i)(?:^|\s)(?:est|sont|été|ai|as|a|avons|avez|ont|était|étaient|sera|seront|semble|semblent|reste|restent|paraît)\s`)
 var enDeterminerBefore = regexp.MustCompile(`(?i)(?:^|[^\p{L}])(?:the|a|an|my|your|our|its|their|his|her)\s+(?:\p{L}+ly\s+)?$`)
@@ -108,14 +113,15 @@ var nounAfter = regexp.MustCompile(`^\s+\p{L}`)
 
 func participleAdjective(s string, loc []int) bool {
 	word := strings.TrimRightFunc(s[loc[0]:loc[1]], func(r rune) bool { return !(r == 'é' || r == 'É' || r >= 'a' && r <= 'z' || r >= 'A' && r <= 'Z') })
-	if !participle.MatchString(word) {
-		return false
+	before, after := s[max(0, loc[0]-60):loc[0]], s[loc[0]+len(word):]
+	switch {
+	case frParticiple.MatchString(word):
+		m := frNounGroupBefore.FindStringSubmatch(before)
+		return m != nil && !frAuxiliary.MatchString(" "+m[1]) && !verblessResult.MatchString(after)
+	case enParticiple.MatchString(word):
+		return enDeterminerBefore.MatchString(before) && nounAfter.MatchString(after)
 	}
-	before := s[max(0, loc[0]-60):loc[0]]
-	if m := frNounGroupBefore.FindStringSubmatch(before); m != nil && !frAuxiliary.MatchString(" "+m[1]) {
-		return true
-	}
-	return enDeterminerBefore.MatchString(before) && nounAfter.MatchString(s[loc[0]+len(word):])
+	return false
 }
 
 // lastEdit is the last change a test could contradict. A prose file (README, notes, an agent's
