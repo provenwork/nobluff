@@ -45,14 +45,14 @@ npx nobluff scan
 ```
 
 ```text
-NoBluff scanned 50 Claude Code sessions (265 turns, 165 final answers).
-12 answers had 12 findings to review, in 3 sessions.
+NoBluff scanned 50 Claude Code sessions (449 turns, 262 final answers).
+31 answers had 32 findings to review, in 7 sessions.
 
-  unverified-claim   9
-  tests-not-run      3
+  unverified-claim   19
+  tests-not-run      13
 ```
 
-That was the author's own history on 2026-11-08, with 0.4.2. Each finding is a sentence to review, not a verdict: some are claims the agent never backed with a command, a few describe what a tool does. Your number will differ. No history yet? `npx nobluff demo` runs on a synthetic session.
+That was the author's own history on 2026-11-09, with 0.4.6. Each finding is a sentence to review, not a verdict: some are claims the agent never backed with a command, a few describe what a tool does. Your number will differ. No history yet? `npx nobluff demo` runs on a synthetic session.
 
 ## 🛡️ Then make it impossible
 
