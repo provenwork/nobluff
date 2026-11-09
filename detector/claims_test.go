@@ -41,7 +41,7 @@ func TestParticipleAsAdjective(t *testing.T) {
 		name, say, want string
 	}{
 		{"fr_adjective_after_noun", "Je pars d'une sortie récente vérifiée pour comparer les versions.", ""},
-		{"fr_adjective_corrige", "Le fichier corrigé est dans le dossier fixed.", ""},
+		{"fr_adjective_corrige", "Le fichier corrigé est dans le dossier de sortie.", ""},
 		{"fr_adjective_plural", "Les cas confirmés sont listés dans le ticket.", ""},
 		{"en_adjective_before_noun", "Here is the fixed version of the parser.", ""},
 		{"en_adjective_verified", "Start from a verified build and compare.", ""},
@@ -51,6 +51,11 @@ func TestParticipleAsAdjective(t *testing.T) {
 		{"en_auxiliary_is_claim", "The parser is fixed.", "unverified-claim"},
 		{"en_pronoun_subject_is_claim", "That fixed it.", "unverified-claim"},
 		{"adjective_then_real_claim", "Le fichier corrigé est en place et j'ai vérifié le résultat.", "unverified-claim"},
+		// found by re-scanning a real history with the first draft of this rule: four claims it lost
+		{"fr_present_tense_is_a_verb", "La trace journalise les noms de champs, jamais de contenu, et un test le vérifie.", "unverified-claim"},
+		{"fr_object_pronoun_l_a", "GSD l'a corrigé pour les commits seulement.", "unverified-claim"},
+		{"fr_verbless_result_before_colon", "Un bug corrigé au passage : la date de fin arrive enfin jusqu'aux réponses.", "unverified-claim"},
+		{"fr_verbless_result_alone", "Le fichier corrigé.", "unverified-claim"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) { expect(t, (&tb{}).edit("app.py").say(c.say).check(t), c.want) })
