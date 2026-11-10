@@ -29,7 +29,7 @@
 - ✅ **Blocks the bluff at the source**: a Claude Code Stop hook stops the turn when "tests pass" has no test run behind it.
 - ✅ **Deterministic**: one small Go binary, no model, no network, the same verdict every time.
 - ✅ **Never traps the agent**: it blocks once, then only warns, so it cannot loop.
-- ✅ **Audited by a rival AI**: eight bypasses found before launch, all fixed and kept as public regression tests.
+- ✅ **Adversarially audited before launch**: OpenAI Codex found eight bypasses, all fixed and kept as public regression tests. Codex also wrote some of the fixes, so this is not an independent audit.
 - ✅ **Zero runtime dependencies**: six reproducible binaries, SHA256 recorded in a build manifest.
 
 ## 🎬 Demo
@@ -91,7 +91,7 @@ This is a bounded shell parser, not a shell interpreter: wrappers, aliases, scri
 
 Exit codes for `check` and `demo`: **0** no finding, **1** findings to review, **2** input/operational error. Zero findings is not a certificate. `scan` reports distinct answers separately from rule findings and identifies parse coverage gaps. Its default is the 50 most recent top-level sessions; subagent folders are excluded. `last` falls back to the latest session of any project if this folder has none.
 
-Before launch, a competing model audited NoBluff adversarially. The eight bypasses it found, such as `echo pytest` counting as a test run, are fixed and now part of the public regression benchmark (see Public, reproducible checks).
+Before launch, OpenAI Codex audited NoBluff adversarially. The eight bypasses it found, such as `echo pytest` counting as a test run, are fixed and now part of the public regression benchmark (see Public, reproducible checks). Codex also contributed some of the fixes, so the audit is not independent.
 
 </details>
 
@@ -138,7 +138,7 @@ python scripts/build.py --check
 python scripts/verify_package.py
 ```
 
-The benchmark contains **30 explicitly constructed cases: eight known bypass regressions, four comparison cases, nine quotation cases, five attribution cases, three French negation cases and one interpreter-option case** (definition dated 2026-11-08). It is a regression corpus chosen around known defects, not a random sample and not a real-world accuracy estimate. Results must be recalculated with the commands above. No claim about user adoption, long-session bluff rates, or skill efficacy follows from it. Earlier releases quoted internal studies whose full protocols and corpora were not public; their historical notes remain labelled as such, and those numbers are not evidence for this candidate.
+The benchmark contains **30 explicitly constructed cases: eight known bypass regressions, four comparison cases, nine quotation cases, five attribution cases, three French negation cases and one interpreter-option case** (definition dated 2026-11-08). It is a regression corpus chosen around known defects, not a random sample and not a real-world accuracy estimate. Results must be recalculated with the commands above. No claim about user adoption, long-session bluff rates, or skill efficacy follows from it. Earlier releases quoted internal studies whose full protocols and corpora were not public; their historical notes remain labelled as such, and those numbers are not evidence for the current release.
 
 <details>
 <summary><b>Build reproducibility</b></summary>
@@ -168,7 +168,7 @@ This demonstrates a test-coverage gap, not a measured effect of installing text 
 
 `examples/managed-agents/webhook.py` requires separately installed `anthropic` and `flask`, API credentials and webhook signing configuration. Set `NOBLUFF_BIN` to a verified local binary and `NOBLUFF_STATE` to a private writable SQLite file. It never downloads a detector automatically.
 
-The adapter persists delivery/challenge state. Failed processing returns 503 and permits retry; a completed duplicate returns 204. An untrusted `[NoBluff]` prefix alone cannot suppress the challenge. Detector failure is an error, never a clean verdict. An ambiguous outbound send is not resent automatically: inspect the session events and reconcile its stored challenge before retrying. Run one server process; keep its database private and backed up. Offline SDK/Flask doubles cover control flow only. A real signed webhook, service deployment and end-to-end Managed Agents delivery are **not verified** by this candidate.
+The adapter persists delivery/challenge state. Failed processing returns 503 and permits retry; a completed duplicate returns 204. An untrusted `[NoBluff]` prefix alone cannot suppress the challenge. Detector failure is an error, never a clean verdict. An ambiguous outbound send is not resent automatically: inspect the session events and reconcile its stored challenge before retrying. Run one server process; keep its database private and backed up. Offline SDK/Flask doubles cover control flow only. A real signed webhook, service deployment and end-to-end Managed Agents delivery are **not verified** in the current release.
 
 </details>
 
